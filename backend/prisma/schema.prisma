@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Installer {
+  installer_id String      @id @db.VarChar(20)
+  name         String      @db.VarChar(100)
+  phone        String      @db.VarChar(20)
+  state        String      @db.VarChar(10)
+  home_base    String      @db.VarChar(100)
+  working_days String      @db.VarChar(50)
+  shift_start  String      @db.VarChar(20)
+  shift_end    String      @db.VarChar(20)
+  leave_start  DateTime?   @db.Date
+  leave_end    DateTime?   @db.Date
+  created_at   DateTime    @default(now())
+  jobs         Job[]
+
+  @@map("installers")
+}
+
+model Job {
+  job_id                String       @id @db.VarChar(20)
+  customer_name         String       @db.VarChar(150)
+  customer_phone        String       @db.VarChar(20)
+  customer_email        String       @db.VarChar(150)
+  site_address          String       @db.VarChar(255)
+  suburb                String       @db.VarChar(100)
+  state                 String       @db.VarChar(10)
+  postcode              String       @db.VarChar(10)
+  job_type              String       @db.VarChar(100)
+  battery_model         String       @db.VarChar(100)
+  scheduled_start       DateTime?    @db.Timestamptz(6)
+  duration_blocks       Int          @default(1)
+  status                String       @default("unscheduled") @db.VarChar(20)
+  assigned_installer_id String?      @db.VarChar(20)
+  notes                 String?      @db.Text
+  created_at            DateTime     @default(now())
+  installer             Installer?   @relation(fields: [assigned_installer_id], references: [installer_id], onDelete: SetNull)
+
+  @@map("jobs")
+}
