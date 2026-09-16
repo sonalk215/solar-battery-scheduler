@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FiAlertTriangle, FiCalendar, FiUser } from 'react-icons/fi';
+import JobModal from './JobModal';
 
 const TWO_WEEK_DAYS = [
   '2026-09-28',
@@ -18,6 +19,7 @@ const ScheduleGrid = ({ installers, jobs, weatherRisk, onDropJob }) => {
   const [selectedMobileDate, setSelectedMobileDate] = useState(
     TWO_WEEK_DAYS[0]
   );
+  const [selectedJob, setSelectedJob] = useState(null); // Modal state
 
   const handleDragOver = (e) => e.preventDefault();
 
@@ -88,10 +90,9 @@ const ScheduleGrid = ({ installers, jobs, weatherRisk, onDropJob }) => {
   };
 
   return (
-    <div className="flex-1 w-full bg-slate-100 p-3 sm:p-5 flex flex-col overflow-hidden">
+    <div className="flex-1 w-full bg-slate-100 p-3 sm:p-5 flex flex-col overflow-hidden relative">
       {/* ================= MOBILE VIEW (< 768px) ================= */}
       <div className="block md:hidden flex-1 flex flex-col space-y-3">
-        {/* Date Selector Pills for Mobile */}
         <div className="flex overflow-x-auto space-x-2 pb-2 scrollbar-none">
           {TWO_WEEK_DAYS.map((d) => {
             const atRisk = isWeatherRiskDay(d);
@@ -118,7 +119,6 @@ const ScheduleGrid = ({ installers, jobs, weatherRisk, onDropJob }) => {
           })}
         </div>
 
-        {/* Weather Risk Banner for Selected Mobile Date */}
         {isWeatherRiskDay(selectedMobileDate) && (
           <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs p-2.5 rounded-lg flex items-center gap-2">
             <FiAlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
@@ -129,7 +129,6 @@ const ScheduleGrid = ({ installers, jobs, weatherRisk, onDropJob }) => {
           </div>
         )}
 
-        {/* Installers List & Jobs for Selected Mobile Date */}
         <div className="flex-1 overflow-y-auto space-y-3 pb-4">
           {installers.map((inst) => {
             const dayJobs = jobs.filter(
@@ -179,7 +178,10 @@ const ScheduleGrid = ({ installers, jobs, weatherRisk, onDropJob }) => {
                     dayJobs.map((j) => (
                       <div
                         key={j.job_id}
-                        className="bg-blue-50 border border-blue-200 text-blue-900 p-2.5 rounded-lg text-xs shadow-2xs"
+                        draggable
+                        onDragStart={(e) => handleJobDragStart(e, j)}
+                        onClick={() => setSelectedJob(j)}
+                        className="bg-blue-50 border border-blue-200 text-blue-900 p-2.5 rounded-lg text-xs shadow-2xs cursor-pointer hover:bg-blue-100 transition"
                       >
                         <div className="font-semibold text-blue-950">
                           {j.customer_name}
@@ -272,7 +274,8 @@ const ScheduleGrid = ({ installers, jobs, weatherRisk, onDropJob }) => {
                           key={j.job_id}
                           draggable
                           onDragStart={(e) => handleJobDragStart(e, j)}
-                          className="bg-blue-50 border border-blue-200 text-blue-900 p-2 rounded-md text-[11px] cursor-grab active:cursor-grabbing hover:bg-blue-100 mb-1.5 shadow-2xs transition"
+                          onClick={() => setSelectedJob(j)}
+                          className="bg-blue-50 border border-blue-200 text-blue-900 p-2 rounded-md text-[11px] cursor-pointer hover:bg-blue-100 mb-1.5 shadow-2xs transition"
                         >
                           <div className="font-semibold truncate text-blue-950">
                             {j.customer_name}
@@ -290,6 +293,9 @@ const ScheduleGrid = ({ installers, jobs, weatherRisk, onDropJob }) => {
           </tbody>
         </table>
       </div>
+
+      {/* Render the clean separate modal component */}
+      <JobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>
   );
 };
