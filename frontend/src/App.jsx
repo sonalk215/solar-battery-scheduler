@@ -72,6 +72,7 @@ function App() {
           installers={installers}
           jobs={jobs}
           weatherRisk={weatherRisk}
+          // weatherRisk={mockWeatherRisk} // Use mock data for testing
           onDropJob={handleDropAssignment}
         />
       </main>
