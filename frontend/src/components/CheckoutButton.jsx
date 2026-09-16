@@ -7,8 +7,9 @@ const CheckoutButton = ({ job }) => {
   const handleCheckout = async () => {
     setLoading(true);
     try {
+      console.log(baseURL);
       const response = await fetch(
-        `${baseURL}/api/payments/create-checkout-session`,
+        `${baseURL}/payments/create-checkout-session`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
