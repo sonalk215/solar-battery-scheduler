@@ -98,3 +98,16 @@ Vite will serve the application locally on http://localhost:5173
   * **Daily Capacity & Overlap:** Prevents double-booking and restricts total daily hours from exceeding shift length limits.
 * **Weather Risk Warnings:** Highlights high-risk days on the dispatch grid based on live Open-Meteo wind and precipitation forecasts.
 
+
+## Payment Integration (Stripe)
+
+The application includes a fully configured Stripe Checkout payment flow for collecting job deposits.
+
+### Current Status
+* **Implemented:** 
+  * Backend route (`/api/payments/create-checkout-session`) to generate secure Stripe Checkout sessions.
+  * Frontend `CheckoutButton` component integrated into the job details modal.
+  * Support for Stripe Test Mode (`pk_test_...` / `sk_test_...`).
+* **Pending / Known Limitation:** 
+  * **Job State Update:** While payments process successfully through Stripe and redirect back to the schedule view, the automated backend/frontend state update to remove or mark the job as "Paid" in the database upon successful return is **not yet handled**.
+
